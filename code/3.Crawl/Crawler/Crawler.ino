@@ -55,8 +55,7 @@ volatile float site_now[4][3];		//real-time coordinates of the end of each leg
 volatile float site_expect[4][3];	//expected coordinates of the end of each leg
 float temp_speed[4][3];		//each axis' speed, needs to be recalculated before each movement
 float move_speed;			//movement speed
-float speed_multiple = 1
-1;	//movement speed multiple
+float speed_multiple = 1;	//movement speed multiple
 const float spot_turn_speed = 4;
 const float leg_move_speed = 8;
 const float body_move_speed = 3;
@@ -160,67 +159,47 @@ void loop()
 	Serial.println("Waiting for comands");
 
 	int order;
+  int last_order = 5;
 	while (1)
 	{
 		if (Serial.available())
 		{
 			order = Serial.parseInt();
 
-				if (order > 0)
-				{
-					Serial.print("Order:");
-					Serial.print(order);
-					Serial.print(" //");
-
-					if (order < 5)
-						if (!is_stand())
-							stand();
-
-					switch (order)
-					{
-					case 1:
-						Serial.println("Step forward");
-						step_forward(1);
-						break;
-					case 2:
-						Serial.println("Step back");
-						step_back(1);
-						break;
-					case 3:
-						Serial.println("Turn left");
-						turn_left(1);
-						break;
-					case 4:
-						Serial.println("Turn right");
-						turn_right(1);
-						break;
-					case 5:
-						if (is_stand())
-						{
-							Serial.println("Sit");
-							sit();
-						}
-						else
-						{
-							Serial.println("Stand");
-							stand();
-						}
-						break;
-					}
-
-					rest_counter = 0;
-				}
-
 		}
-		if (rest_counter > wait_rest_time)
-		{
-			if (is_stand())
-			{
-				Serial.println("Auto sit");
-				sit();
-				rest_counter = 0;
-			}
-		}
+    
+		switch (last_order)
+          {
+          case 1:
+            Serial.println("Step forward");
+            step_forward(1);
+            break;
+          case 2:
+            Serial.println("Step back");
+            step_back(1);
+            break;
+          case 3:
+            Serial.println("Turn left");
+            turn_left(1);
+            break;
+          case 4:
+            Serial.println("Turn right");
+            turn_right(1);
+            break;
+          case 5:
+            if (is_stand())
+            {
+              Serial.println("Sit");
+              sit();
+            }
+            else
+            {
+              Serial.println("Stand");
+              stand();
+            }
+            break;
+          }
+		      last_order = order;
 	}
 
 //end of your code -----------------------------------------------------------
